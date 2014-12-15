@@ -11,38 +11,38 @@ chars.simplify.algorithms.helper = {};
 chars.simplify.algorithms.helper.dotProduct = function (pointA, pointB, pointC) {
 	var ab; // point
 	var bc; // point
-    
-    ab.x = pointB.x - pointA.x;
-    ab.y = pointB.y - pointA.y;
-    bc.x = pointC.x - pointB.x;
-    bc.y = pointC.y - pointB.y;
+	
+	ab.x = pointB.x - pointA.x;
+	ab.y = pointB.y - pointA.y;
+	bc.x = pointC.x - pointB.x;
+	bc.y = pointC.y - pointB.y;
 
-    var dot = (ab.x * bc.x) + (ab.y * bc.y);
+	var dot = (ab.x * bc.x) + (ab.y * bc.y);
 
-    return dot;
+	return dot;
 };
 
 //Compute the cross product AB x AC
 chars.simplify.algorithms.helper.crossProduct = function (pointA, pointB, pointC) {
-    var ab; // point
+	var ab; // point
 	var ac; // point
 
 	ab.x = pointB.x - pointA.x;
 	ab.y = pointB.y - pointA.y;
 	ac.x = pointC.x - pointA.x;
 	ac.y = pointC.y - pointA.y;
-    
+	
 	var cross = (ab.x * ac.y) - (ab.y * ac.x);
 
-    return cross;
+	return cross;
 };
 
 //Compute the distance from A to B
 chars.simplify.algorithms.helper.distance = function (pointA, pointB) {
-    var dx = pointA.x - pointB.x;
-    var dy = pointA.y - pointB.y;
+	var dx = pointA.x - pointB.x;
+	var dy = pointA.y - pointB.y;
 
-    return Math.sqrt( (dx * dx) + (dy * dy) );
+	return Math.sqrt( (dx * dx) + (dy * dy) );
 };
 
 //Compute the distance from AB to C
@@ -53,16 +53,16 @@ chars.simplify.algorithms.helper.lineToPointDistance2D = function (line, point, 
 	var pointB = line.endPoint;
 	var pointC = point;
 
-    var dist = this.crossProduct(pointA, pointB, pointC) / this.distance(pointA, pointB);
-    if (isSegment) {
-        var dot1 = this.dotProduct(pointA, pointB, pointC);
-        if (dot1 > 0) return this.distance(pointB, pointC);
+	var dist = this.crossProduct(pointA, pointB, pointC) / this.distance(pointA, pointB);
+	if (isSegment) {
+		var dot1 = this.dotProduct(pointA, pointB, pointC);
+		if (dot1 > 0) return this.distance(pointB, pointC);
 
-        var dot2 = this.dotProduct(pointB, pointA, pointC);
-        if (dot2 > 0) return this.distance(pointA, pointC);
-    }
+		var dot2 = this.dotProduct(pointB, pointA, pointC);
+		if (dot2 > 0) return this.distance(pointA, pointC);
+	}
 
-    return Math.abs(dist);
+	return Math.abs(dist);
 };
 
 
@@ -95,12 +95,12 @@ chars.simplify.algorithms.douglasPeucker = function (pointList, epsilon) {
 	// If max distance is greater than epsilon, recursively simplify
 	if (dmax > epsilon) {
 		// Recursive call - Se usar el +1 debido a que slice no incluye el ultimo elemento dado
-        recResults1 = this.douglasPeucker(pointList.slice(0, index + 1), epsilon);
-        recResults2 = this.douglasPeucker(pointList.slice(index, endIndex + 1), epsilon);
+		recResults1 = this.douglasPeucker(pointList.slice(0, index + 1), epsilon);
+		recResults2 = this.douglasPeucker(pointList.slice(index, endIndex + 1), epsilon);
 
-        // Build the result list - Nos aseguramos de no incluir el ultimo punto de la primera
-        // lista, ya que coincide con el primer punto de la segunda lista.
-        resultList = { recResults1.slice(0, recResults1.length - 1).concat(recResults2) }
+		// Build the result list - Nos aseguramos de no incluir el ultimo punto de la primera
+		// lista, ya que coincide con el primer punto de la segunda lista.
+		resultList = { recResults1.slice(0, recResults1.length - 1).concat(recResults2) }
 	} else {
 		// Si no hay una distancia a un punto superior a epsilon descartamos todos los puntos
 		// intermedios y devolvemos solo los extremos del segmento
