@@ -7,48 +7,6 @@ chars.simplify.algorithms.helper = {};
 
 
 
-/*chars.simplify.algorithms.helper.sqr = function (x) { return x * x };
-
-// Distancia al cuadrado de un punto a otro
-// |w-v|^2
-chars.simplify.algorithms.helper.distanceSquaredTo = function (v, w) { return this.sqr(v.x - w.x) + this.sqr(v.y - w.y) };
-
-// dot product, or scalar product
-chars.simplify.algorithms.helper.docProduct = function () { return; };
-
-// http://stackoverflow.com/a/1501725
-// point es un objeto con las propiedades x, y, z de tipo real.
-// segment es un objeto con las propiedades startLine y endLine de tipo point
-chars.simplify.algorithms.helper.distanceSquaredToSegment = function (point, segment) {
-	var dist = this.distanceSquaredTo( segment.startLine, segment.endLine );
-
-	// Si el segmento es un punto el calculo se reduce a determinar la distancia entre dos puntos.
-	if (dist === 0) {
-		return this.distanceSquaredTo( point, segment.startLine );
-	}
-
-	// Consider the line extending the segment, parameterized as v + t (w - v).
-    // We find projection of point p onto the line. 
-    // It falls where t = [(p-v) . (w-v)] / |w-v|^2
-    var t = ((point.x - segment.startLine.x) * (segment.endLine.x - segment.startLine.x) + (point.y - segment.startLine.y) * (segment.endLine.y - segment.startLine.y)) / dist;
-
-    if (t < 0) return this.distanceSquaredTo(point, segment.startLine);
-  	if (t > 1) return this.distanceSquaredTo(point, segment.endLine);
-
-	return this.distanceSquaredTo(point, { 
-		x: segment.startLine.x + t * (segment.endLine.x - segment.startLine.x),
-        y: segment.startLine.y + t * (segment.endLine.y - segment.startLine.y) 
-    });
-};
-
-chars.simplify.algorithms.helper.shortestDistanceToSegment = function (point, segment) {
-	return Math.sqrt(distToSegmentSquared(point, segment));
-};
-*/
-
-
-
-
 //Compute the dot product AB . AC
 chars.simplify.algorithms.helper.dotProduct = function (pointA, pointB, pointC) {
 	var ab; // point
@@ -127,7 +85,7 @@ chars.simplify.algorithms.douglasPeucker = function (pointList, epsilon) {
 	var resultList;
 
 	for (i = 1; i < endIndex; i++) {
-		d = shortestDistanceToSegment(pointList[i], { startPoint : pointList[0], endPoint : pointList[endIndex] });
+		d = this.helper.shortestDistanceToSegment(pointList[i], { startPoint : pointList[0], endPoint : pointList[endIndex] });
 		if (d > dmax) {
 			index = i;
 			dmax = d;
@@ -137,8 +95,8 @@ chars.simplify.algorithms.douglasPeucker = function (pointList, epsilon) {
 	// If max distance is greater than epsilon, recursively simplify
 	if (dmax > epsilon) {
 		// Recursive call - Se usar el +1 debido a que slice no incluye el ultimo elemento dado
-        recResults1 = douglasPeucker(pointList.slice(0, index + 1), epsilon);
-        recResults2 = douglasPeucker(pointList.slice(index, endIndex + 1), epsilon);
+        recResults1 = this.douglasPeucker(pointList.slice(0, index + 1), epsilon);
+        recResults2 = this.douglasPeucker(pointList.slice(index, endIndex + 1), epsilon);
 
         // Build the result list - Nos aseguramos de no incluir el ultimo punto de la primera
         // lista, ya que coincide con el primer punto de la segunda lista.
