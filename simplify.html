@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Curve simplify (jqPlot test)</title>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/jqplot/1.0.8/jquery.jqplot.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/jqplot/1.0.8/plugins/jqplot.canvasTextRenderer.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/jqplot/1.0.8/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+
+    <!-- My scripts -->
+    <script src="js/douglaspeucker.js"></script>
+
+    <!-- jqplot stylesheets -->
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jqplot/1.0.8/jquery.jqplot.css">
+
+</head>
+<body>
+
+    <h1>Curve simplify (jqPlot test)</h1>
+    <h2>Original</h2>
+    <div id="original" style="height: 300px; width: 100%;"></div>
+    <h2>Douglas</h2>
+    <div id="douglas" style="height: 300px; width: 100%;"></div>
+
+    <script>
+        var drawChart = function (title, containerid, pointList) {
+            var i;
+            var serie = [];
+            var point;
+            for (i = 0; i < pointList.length; i++) {
+                point = pointList[i];
+                serie.push([point.x, point.y]);
+            }
+
+            $(document).ready(function(){
+                var plot1 = $.jqplot(containerid, [serie], {
+                    title: title,
+                    seriesDefaults: {
+                        showMarker:false,
+                        pointLabels: { show: false }
+                    },
+                    axes:{
+                        xaxis:{ min:0, max:1000 },
+                        yaxis:{ min:0, max:400 }
+                    }
+                });
+            });
+        };
+
+        var drawOriginalChart = function (pointList) {
+            var title = 'Original dataset - ' + pointList.length + ' points';
+            drawChart(title, 'original', pointList);
+        };
+
+        var drawDouglasPeuckerChart = function (pointList) {
+            var epsilon = 2;
+            var newPointList = chars.simplify.algorithms.douglasPeucker(pointList, epsilon);
+            var title = 'Douglas-Peucket algorithm - ' + newPointList.length + ' points - epsilon: ' + epsilon;
+            drawChart(title, 'douglas', newPointList);
+        };
+
+        var readTextFile = function (url, callback) {
+            var request = new XMLHttpRequest();
+            request.timeout = 10000;
+            request.open("GET", url, true);
+
+            request.onload = function () {
+                var text = this.responseText;
+                var lines = text.split(/\r\n|\n/);
+
+                if (typeof callback !== 'undefined') {
+                    callback(lines);
+                }
+            };
+    
+            request.send();
+        };
+
+        readTextFile('test.csv', function (lines) {
+            var length = lines.length;
+            var pointList = [];
+            var point;
+            var fields;
+            var i;
+            for (i = 1; i < length; i++) {
+                if (lines[i] != '') {
+                    fields = lines[i].split(',');
+                    point = { x: fields[0], y: fields[1] };
+                    pointList.push(point);
+                }
+            }
+            drawOriginalChart(pointList);
+            drawDouglasPeuckerChart(pointList);
+        });
+
+    </script>
+</body>
+</html>
